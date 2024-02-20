@@ -1,6 +1,7 @@
-from django.core.management.base import BaseCommand, CommandParser
-from HW_2.myproject.myapp.models import Product
+from django.core.management.base import BaseCommand
+from shopapp.models import Product
 from decimal import Decimal
+
 
 class Command(BaseCommand):
     help = "Create product."

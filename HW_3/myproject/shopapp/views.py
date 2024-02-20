@@ -1,7 +1,7 @@
 import logging
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from myapp.models import Order, Customer, OrderItem, Product
+from shopapp.models import Order, Client, OrderItem, Product
 from datetime import timedelta
 from django.utils import timezone
 
@@ -30,7 +30,7 @@ def about(request):
 def order(request, order_id):
     order = Order.objects.get(pk=order_id)
     products = '<br />'.join([f'Товар: {product.name} (Цена: {product.price})' for product in order.products.all()])
-    return HttpResponse(f'<h2>Заказ №{order.id}</h2> Клиент: {order.customer.name}, Итого: {order.total_price()}:<br>'
+    return HttpResponse(f'<h2>Заказ №{order.id}</h2> Клиент: {order.client.name}, Итого: {order.total_price()}:<br>'
                         f'{products}<br>'
                         f'Заказ создан: {order.date_ordered}')
 
@@ -39,18 +39,18 @@ def orders(request):
     orders = Order.objects.all()
     orders_list = '<h2>Заказы</h2>'
     for order in orders:
-        orders_list += (f'Заказ №{order.id} от: {order.date_ordered},  Клиент: {order.customer.name},  '
+        orders_list += (f'Заказ №{order.id} от: {order.date_ordered},  Клиент: {order.client.name},  '
                         f'Итого: {order.total_price()}<br />')
     return HttpResponse(orders_list)
 
 
 # Показать все заказы клиента (по id клиента)
-def show_all_customer_orders(request, customer_id):
-    customer = get_object_or_404(Customer, pk=customer_id)
-    customer_orders = Order.objects.filter(customer=customer)
+def show_all_client_orders(request, client_id):
+    client = get_object_or_404(Client, pk=client_id)
+    client_orders = Order.objects.filter(client=client)
 
     orders_products = []
-    for order in customer_orders:
+    for order in client_orders:
         order_items = OrderItem.objects.filter(order=order)
 
         products_and_number_of_items = []
@@ -61,12 +61,12 @@ def show_all_customer_orders(request, customer_id):
 
         orders_products.append((order, products_and_number_of_items))
 
-    context = {'orders_products': orders_products, 'customer': customer}
-    return render(request, "all_customer_orders.html", context)
+    context = {'orders_products': orders_products, 'client': client}
+    return render(request, "all_client_orders.html", context)
 
 
 # Показать все последние заказы клиента (по id клиента)
-def show_last_customer_orders(request, customer_id):
+def show_last_client_orders(request, client_id):
     now = timezone.now()
     periods = {
         'week': now - timedelta(days=7),
@@ -74,17 +74,17 @@ def show_last_customer_orders(request, customer_id):
         'year': now - timedelta(days=365),
     }
     orders_by_data = {}
-    customer = get_object_or_404(Customer, pk=customer_id)
+    client = get_object_or_404(Client, pk=client_id)
 
     for period, start_time in periods.items():
         orders_by_data[period] = OrderItem.objects.filter(
-            order__customer=customer,
+            order__client=client,
             order__date_ordered__gte=start_time
         ).select_related('order', 'product').order_by('-order__date_ordered')
 
     context = {
         'orders_by_data': orders_by_data,
-        'customer': customer
+        'client': client
     }
 
-    return render(request, "last_customer_orders.html", context)
+    return render(request, "last_client_orders.html", context)

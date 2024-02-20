@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-xn)@3c3949^#!=$86p4u!f#h*6im^+j=ir-(=b^9q3jp^ah#z6'
+SECRET_KEY = 'django-insecure-rwyt#g^29dq+#^^c)@p_q&doxf@z*(8=2mi-+4te+ejr6w2yne'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,8 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'myapp',
-
 ]
 
 MIDDLEWARE = [
@@ -78,16 +76,18 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hw_shop_database',
+        'NAME': 'shop_database',
         'USER': 'root',
         'PASSWORD': 'ruslan',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-    },
+
+        },
+    }
 }
-}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
