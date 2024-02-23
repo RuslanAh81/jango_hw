@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from shopapp.models import Order, Client, OrderItem, Product
 from datetime import timedelta
 from django.utils import timezone
+from . import forms
 
 
 # Create your views here.
@@ -88,3 +89,44 @@ def show_last_client_orders(request, client_id):
     }
 
     return render(request, "last_client_orders.html", context)
+
+
+def create_product(request):
+    if request.method == 'POST':
+        form = forms.ProductForm(request.POST, request.FILES)
+        message = 'Ошибка в данных'
+        if form.is_valid():
+            form.save()
+            message = f'Товар создан'
+            form = forms.ProductForm()
+            #return render(request, "shop_app/create_product_form.html", {'form': form, 'message': message})
+    else:
+        form =forms.ProductForm()
+        message = 'Создание нового товара'
+    return render(request, 'create_product_form.html', {'form': form, 'message': message})
+
+def form(request):
+    form_for_client = forms.ClientForm
+    form_for_product = forms.ProductForm
+    context = {
+        'form_for_client': form_for_client,
+        'form_for_product': form_for_product
+    }
+    return render(request, 'create_client_form.html', context)
+
+def add_client(request):
+    form = forms.ClientForm(request.POST)
+    result = "Покупатель успешно добавлен %s" %request.path
+    if request.method == "POST":
+        if form.is_valid():
+            data = form.cleaned_data
+            form.save()
+            print(data['name'])
+            return HttpResponse("Покупатель добавлен %s" %request.path)
+
+def product_add(request):
+    form = forms.ProductForm(request.POST)
+    if request.method == "POST" and form.is_valid():
+        data = form.cleaned_data
+        form = form.save()
+        return HttpResponse("Продукт добавлен")
