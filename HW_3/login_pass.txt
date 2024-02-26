@@ -1,0 +1,5 @@
+username : ruslan
+password : ruslanadmin1
+
+
+Вот только не могу понять, обновляется ли база в гите.

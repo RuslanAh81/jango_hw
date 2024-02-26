@@ -1,11 +1,12 @@
 import logging
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from shopapp.models import Order, Client, OrderItem, Product
 from datetime import timedelta
 from django.utils import timezone
 from . import forms
-
+from . forms import EditProductForm
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 logger = logging.getLogger(__name__)
@@ -130,3 +131,21 @@ def product_add(request):
         data = form.cleaned_data
         form = form.save()
         return HttpResponse("Продукт добавлен")
+
+
+def show_all_products(request):
+    products = Product.objects.all()
+
+    return render(request, 'all_products.html', {"products": products})
+
+
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    if request.method == 'POST':
+        form = EditProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            product.save()
+            return redirect('../../show_all_products')
+    else:
+        form = EditProductForm(instance=product)
+        return render(request, 'edit_product.html', {'form': form})
