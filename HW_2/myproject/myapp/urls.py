@@ -1,11 +1,13 @@
 from django.urls import path
-from . views import CreateProduct, OrderedProducts, ReadProduct
+from django.urls import path, include
+from . import views
 
 
-
-
-# urlpatterns = [
-#     path('ordered-products/<int:customer_id>/', OrderedProducts.as_view(), name='ordered_products'),
-#     path('create-product/', CreateProduct.as_view(), name='create_product'),
-#     path('product/<int:product_id>/', ReadProduct.as_view(), name='read_product'),
-# ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('about/', views.about, name='about'),
+    path('order/<int:order_id>/', views.order, name='order'),
+    path('orders/', views.orders, name='all_orders'),
+    path('all_customer_orders/<int:customer_id>', views.show_all_customer_orders, name='show_all_customer_orders'),
+    path('last_customer_orders/<int:customer_id>', views.show_last_customer_orders, name='show_last_customer_orders'),
+]
